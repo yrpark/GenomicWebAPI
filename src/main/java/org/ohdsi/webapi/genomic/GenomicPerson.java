@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 
 public class GenomicPerson {
-    public int  personId;
+    public Long  personId;
     public String gender;
     /**
      *   DD/MM/YYYY

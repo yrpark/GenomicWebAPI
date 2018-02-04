@@ -4,11 +4,13 @@ sv.UPDATE_DATETIME,
 sv.PANEL,
 sv.CLI_RRPT_ID,
 sv.MUT_TYPE,
-sv.SMP_ID,
 sv.PRJ_ID,
 sv.SEC_ID,
 sv.TYPE,
-sv.GENE_CONCEPT_ID,
+sv.GENE1_CONCEPT_ID,
+c1.concept_name as CONCEPT_NAME1,
+sv.GENE2_CONCEPT_ID,
+c2.concept_name as CONCEPT_NAME2,
 sv.MISMATCHES,
 sv.STRANDS,
 sv.REP_OVERLAP,
@@ -25,4 +27,7 @@ sv.TRANSTYPE,
 sv.REARRANGEMENT_TARGET,
 sv.SPECIMEN_ID
 FROM @CDM_schema.genomic_structural_variation sv
-  @WHERE_condition
+    INNER JOIN @CDM_schema.concept c1 ON sv.gene1_concept_id =c1.concept_id
+    INNER JOIN @CDM_schema.concept c2 ON sv.gene2_concept_id=c2.concept_id
+@WHERE_condition
+

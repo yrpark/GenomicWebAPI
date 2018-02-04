@@ -38,11 +38,12 @@ public class GenomicService extends AbstractDaoService {
         String sql_statement = ResourceHelper.GetResourceAsString("/resources/genomic/sql/person.sql");
         sql_statement = SqlRender.renderSql(sql_statement, new String[]{"CDM_schema", "PERSON_ID"}, new String[]{tableQualifier, personID});
         sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
+        log.info("Query " + sql_statement);
 
         getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<Void>() {
             @Override
             public Void mapRow(final ResultSet rs, final int arg1) throws SQLException {
-                person.personId = rs.getInt("PERSON_ID");
+                person.personId = rs.getLong("PERSON_ID");
                 person.gender = rs.getString("GENDER_SOURCE_VALUE");
                 person.yearOfBirth = rs.getInt("YEAR_OF_BIRTH");
                 person.monthOfBirth = rs.getInt("MONTH_OF_BIRTH");
@@ -56,6 +57,7 @@ public class GenomicService extends AbstractDaoService {
         sql_statement = ResourceHelper.GetResourceAsString("/resources/genomic/sql/measurment.sql");
         sql_statement = SqlRender.renderSql(sql_statement, new String[]{"CDM_schema", "PERSON_ID"}, new String[]{tableQualifier,personID});
         sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
+        log.info("Query " + sql_statement);
 
         getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<Void>() {
             @Override
@@ -63,7 +65,9 @@ public class GenomicService extends AbstractDaoService {
                 Measurement measurement = new Measurement();
 
                 measurement.measurementConceptID = rs.getInt("MEASUREMENT_CONCEPT_ID");
-                measurement.measurementDateTime = rs.getTimestamp("MEASUREMENT_DATETIME");
+                measurement.measurementDateTime = rs.getTimestamp("MEASUREMENT_DATE");
+                //
+                //measurement.measurementDateTime = rs.getTimestamp("MEASUREMENT_DATETIME");
                 measurement.valueAsNumber = rs.getInt("VALUE_AS_NUMBER");
                 person.measurement.add(measurement);
                 return null;
@@ -74,6 +78,7 @@ public class GenomicService extends AbstractDaoService {
         sql_statement = ResourceHelper.GetResourceAsString("/resources/genomic/sql/procedureoccurrence.sql");
         sql_statement = SqlRender.renderSql(sql_statement, new String[]{"CDM_schema", "PERSON_ID"}, new String[]{tableQualifier,personID});
         sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
+        log.info("Query " + sql_statement);
 
         getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<Void>() {
             @Override
@@ -81,7 +86,8 @@ public class GenomicService extends AbstractDaoService {
                 ProcedureOccurrence occurrence = new ProcedureOccurrence();
 
                 occurrence.procedureConceptId = rs.getInt("PROCEDURE_CONCEPT_ID");
-                occurrence.procedureDateTime = rs.getTimestamp("PROCEDURE_DATETIME");
+                //occurrence.procedureDateTime = rs.getTimestamp("PROCEDURE_DATETIME");;
+                occurrence.procedureDateTime = rs.getTimestamp("PROCEDURE_DATE");
                 person.procedureoccurrence.add(occurrence);
                 return null;
             }
@@ -113,7 +119,6 @@ public class GenomicService extends AbstractDaoService {
                     report.panel = rs.getString("PANEL");
                     report.cliRrptId = rs.getString("CLI_RRPT_ID");
                     report.mutType = rs.getString("MUT_TYPE");
-                    report.smpId = rs.getString("SMP_ID");
                     report.prjId = rs.getString("PRJ_ID");
                     report.secId = rs.getString("SEC_ID");
                     report.type = rs.getString("TYPE");
@@ -121,6 +126,7 @@ public class GenomicService extends AbstractDaoService {
                     report.start = rs.getLong("ST");
                     report.end = rs.getLong("EN");
                     report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                    report.geneConceptName = rs.getString("CONCEPT_NAME");
                     report.log2 = rs.getFloat("LOG2");
                     report.cn = rs.getInt("CN");
                     report.alteration = rs.getString("ALTERATION");
@@ -150,11 +156,13 @@ public class GenomicService extends AbstractDaoService {
                     report.panel = rs.getString("PANEL");
                     report.cliRrptId = rs.getString("CLI_RRPT_ID");
                     report.mutType = rs.getString("MUT_TYPE");
-                    report.smpId = rs.getString("SMP_ID");
                     report.prjId = rs.getString("PRJ_ID");
                     report.secId = rs.getString("SEC_ID");
                     report.type = rs.getString("TYPE");
-                    report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                    report.gene1ConceptId = rs.getInt("GENE1_CONCEPT_ID");
+                    report.gene1ConceptName = rs.getString("CONCEPT_NAME1");
+                    report.gene2ConceptId = rs.getInt("GENE2_CONCEPT_ID");
+                    report.gene2ConceptName = rs.getString("CONCEPT_NAME2");
                     report.mismatches = rs.getString("MISMATCHES");
                     report.strands = rs.getString("STRANDS");
                     report.repOverlap = rs.getString("REP_OVERLAP");
@@ -190,10 +198,10 @@ public class GenomicService extends AbstractDaoService {
                     report.panel = rs.getString("PANEL");
                     report.cliRrptId = rs.getString("CLI_RRPT_ID");
                     report.mutType = rs.getString("MUT_TYPE");
-                    report.smpId = rs.getString("SMP_ID");
                     report.prjId = rs.getString("PRJ_ID");
                     report.secId = rs.getString("SEC_ID");
                     report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                    report.geneConceptName = rs.getString("CONCEPT_NAME");
                     report.ensId = rs.getString("ENS_ID");
                     report.mutationStatus = rs.getString("MUTATION_STATUS");
                     report.chromosome = rs.getString("CHROMOSOME");
@@ -215,7 +223,7 @@ public class GenomicService extends AbstractDaoService {
                     report.NVarDepth = rs.getLong("N_VAR_DEPTH");
                     report.alleleFreq = rs.getFloat("ALLELE_FREQ");
                     report.strand = rs.getString("STRAND");
-                    report.eoxn = rs.getString("EOXN");
+                    report.exon = rs.getString("EXON");
                     report.intron = rs.getLong("INTRON");
                     report.sift = rs.getString("SIFT");
                     report.polyphen = rs.getString("POLYPHEN");
@@ -223,7 +231,7 @@ public class GenomicService extends AbstractDaoService {
                     report.hrd = rs.getString("HRD");
                     report.mmr = rs.getString("MMR");
                     report.zygosity = rs.getString("ZYGOSITY");
-                    report.transcriptrank = rs.getInt("TRANSCRIPTRANK");
+                    report.transcript = rs.getInt("TRANSCRIPT");
                     report.diagnosis = rs.getString("DIAGNOSIS");
                     report.drug = rs.getString("DRUG");
                     report.drugable = rs.getString("DRUGABLE");
@@ -259,11 +267,13 @@ public class GenomicService extends AbstractDaoService {
         getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<Void>() {
             @Override
             public Void mapRow(final ResultSet rs, final int arg1) throws SQLException {
-                specimen.personID = rs.getInt("person_id");
+                specimen.personID = rs.getLong("person_id");
+                specimen.specimenID = rs.getLong("specimen_id");
                 specimen.specimenConceptID = rs.getInt("specimen_concept_id");
                 specimen.specimenTypeConceptID = rs.getInt("specimen_type_concept_id");
                 specimen.specimenDate = rs.getDate("specimen_date");
-                specimen.specimenDateTime = rs.getTimestamp("specimen_datetime");
+                // 5.2 버전
+                //specimen.specimenDateTime = rs.getTimestamp("specimen_datetime");
                 specimen.quantity = rs.getInt("quantity");
                 specimen.unitConceptID = rs.getInt("unit_concept_id");
                 specimen.anatomicSiteConceptID = rs.getInt("anatomic_site_concept_id");
@@ -316,7 +326,6 @@ public class GenomicService extends AbstractDaoService {
                 report.panel = rs.getString("PANEL");
                 report.cliRrptId = rs.getString("CLI_RRPT_ID");
                 report.mutType = rs.getString("MUT_TYPE");
-                report.smpId = rs.getString("SMP_ID");
                 report.prjId = rs.getString("PRJ_ID");
                 report.secId = rs.getString("SEC_ID");
                 report.type = rs.getString("TYPE");
@@ -324,6 +333,7 @@ public class GenomicService extends AbstractDaoService {
                 report.start = rs.getLong("ST");
                 report.end = rs.getLong("EN");
                 report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                report.geneConceptName = rs.getString("CONCEPT_NAME");
                 report.log2 = rs.getFloat("LOG2");
                 report.cn = rs.getInt("CN");
                 report.alteration = rs.getString("ALTERATION");
@@ -372,11 +382,14 @@ public class GenomicService extends AbstractDaoService {
                 report.panel = rs.getString("PANEL");
                 report.cliRrptId = rs.getString("CLI_RRPT_ID");
                 report.mutType = rs.getString("MUT_TYPE");
-                report.smpId = rs.getString("SMP_ID");
                 report.prjId = rs.getString("PRJ_ID");
                 report.secId = rs.getString("SEC_ID");
                 report.type = rs.getString("TYPE");
-                report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                report.gene1ConceptId = rs.getInt("GENE1_CONCEPT_ID");
+                report.gene1ConceptName = rs.getString("CONCEPT_NAME1");
+                report.gene2ConceptId = rs.getInt("GENE2_CONCEPT_ID");
+                report.gene2ConceptName = rs.getString("CONCEPT_NAME2");
+
                 report.mismatches = rs.getString("MISMATCHES");
                 report.strands = rs.getString("STRANDS");
                 report.repOverlap = rs.getString("REP_OVERLAP");
@@ -432,10 +445,11 @@ public class GenomicService extends AbstractDaoService {
                 report.panel = rs.getString("PANEL");
                 report.cliRrptId = rs.getString("CLI_RRPT_ID");
                 report.mutType = rs.getString("MUT_TYPE");
-                report.smpId = rs.getString("SMP_ID");
                 report.prjId = rs.getString("PRJ_ID");
                 report.secId = rs.getString("SEC_ID");
                 report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                report.geneConceptName = rs.getString("CONCEPT_NAME");
+
                 report.ensId = rs.getString("ENS_ID");
                 report.mutationStatus = rs.getString("MUTATION_STATUS");
                 report.chromosome = rs.getString("CHROMOSOME");
@@ -457,7 +471,7 @@ public class GenomicService extends AbstractDaoService {
                 report.NVarDepth = rs.getLong("N_VAR_DEPTH");
                 report.alleleFreq = rs.getFloat("ALLELE_FREQ");
                 report.strand = rs.getString("STRAND");
-                report.eoxn = rs.getString("EOXN");
+                report.exon = rs.getString("EXON");
                 report.intron = rs.getLong("INTRON");
                 report.sift = rs.getString("SIFT");
                 report.polyphen = rs.getString("POLYPHEN");
@@ -465,7 +479,7 @@ public class GenomicService extends AbstractDaoService {
                 report.hrd = rs.getString("HRD");
                 report.mmr = rs.getString("MMR");
                 report.zygosity = rs.getString("ZYGOSITY");
-                report.transcriptrank = rs.getInt("TRANSCRIPTRANK");
+                report.transcript = rs.getInt("TRANSCRIPT");
                 report.diagnosis = rs.getString("DIAGNOSIS");
                 report.drug = rs.getString("DRUG");
                 report.drugable = rs.getString("DRUGABLE");
@@ -515,12 +529,193 @@ public class GenomicService extends AbstractDaoService {
 
                 final Genomic genomic = new Genomic();
                 Specimen specimen = getSpecimen(sourceKey, Long.toString(specimenId), false);
-                genomic.person = getGenomicPerson(sourceKey, Integer.toString(specimen.personID));
+                genomic.person = getGenomicPerson(sourceKey, Long.toString(specimen.personID));
                 genomic.specimens.add(specimen);
                 return genomic;
             }
         });
     }
+
+
+    @Path("/person/{personId}/copynumbervariation")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<CopyNumberVariation> getCnv(@PathParam("sourceKey") String sourceKey, @PathParam("personId") String personId) {
+        String where = " WHERE specimen_id in ( SELECT specimen_id FROM @CDM_schema.specimen WHERE person_id = " + personId + " )";
+        log.info("QUERY  >>>> " +  where);
+        try {
+            Source source = getSourceRepository().findBySourceKey(sourceKey);
+            String tableQualifier = source.getTableQualifier(SourceDaimon.DaimonType.CDM);
+
+            String sql_statement = ResourceHelper.GetResourceAsString("/resources/genomic/sql/copy_number_variation.sql");
+            sql_statement = SqlRender.renderSql(sql_statement, new String[]{"CDM_schema", "WHERE_condition"}, new String[]{tableQualifier, where});
+            sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
+
+            return getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<CopyNumberVariation>() {
+                @Override
+                public CopyNumberVariation mapRow(final ResultSet rs, final int arg1) throws SQLException {
+                    final CopyNumberVariation report = new CopyNumberVariation();
+                    report.cnvDataId = rs.getLong("CNV_DATA_ID");
+                    report.updateDatetime = rs.getTimestamp("UPDATE_DATETIME");
+                    report.panel = rs.getString("PANEL");
+                    report.cliRrptId = rs.getString("CLI_RRPT_ID");
+                    report.mutType = rs.getString("MUT_TYPE");
+                    report.prjId = rs.getString("PRJ_ID");
+                    report.secId = rs.getString("SEC_ID");
+                    report.type = rs.getString("TYPE");
+                    report.chromosome = rs.getString("CHROMOSOME");
+                    report.start = rs.getLong("ST");
+                    report.end = rs.getLong("EN");
+                    report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                    report.geneConceptName = rs.getString("CONCEPT_NAME");
+                    report.log2 = rs.getFloat("LOG2");
+                    report.cn = rs.getInt("CN");
+                    report.alteration = rs.getString("ALTERATION");
+                    report.alterationDb = rs.getString("ALTERATION_DB");
+                    report.sigflag = rs.getString("SIGFLAG");
+                    report.hrd = rs.getString("HRD");
+                    report.cnvType = rs.getString("CNVTYPE");
+                    report.knownFlag = rs.getString("KNOWNFLAG");
+                    report.specimenId = rs.getInt("SPECIMEN_ID");
+
+                    return report;
+                }
+            });
+
+        } catch (Exception exception) {
+            throw new RuntimeException("Error getting therapy path reports" + exception.getMessage());
+        }
+    }
+
+    @Path("/person/{personId}/singlenucleotidevariants")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<SingleNucleotideVariants> getSnv(@PathParam("sourceKey") String sourceKey, @PathParam("personId") String personId) {
+
+        String where = " WHERE specimen_id in ( SELECT specimen_id FROM @CDM_schema.specimen WHERE person_id = " + personId + " )";
+        log.info("QUERY  >>>> " +  where);
+        try {
+            Source source = getSourceRepository().findBySourceKey(sourceKey);
+            String tableQualifier = source.getTableQualifier(SourceDaimon.DaimonType.CDM);
+
+            String sql_statement = ResourceHelper.GetResourceAsString("/resources/genomic/sql/single_nucleotide_variants.sql");
+            sql_statement = SqlRender.renderSql(sql_statement, new String[]{"CDM_schema", "WHERE_condition"}, new String[]{tableQualifier, where});
+            sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
+
+            return getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<SingleNucleotideVariants>() {
+                @Override
+                public SingleNucleotideVariants mapRow(final ResultSet rs, final int arg1) throws SQLException {
+                    final SingleNucleotideVariants report = new SingleNucleotideVariants();
+                    report.snvDataId = rs.getLong("SNV_DATA_ID");
+                    report.updateDatetime = rs.getTimestamp("UPDATE_DATETIME");
+                    report.panel = rs.getString("PANEL");
+                    report.cliRrptId = rs.getString("CLI_RRPT_ID");
+                    report.mutType = rs.getString("MUT_TYPE");
+                    report.prjId = rs.getString("PRJ_ID");
+                    report.secId = rs.getString("SEC_ID");
+                    report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                    report.geneConceptName = rs.getString("CONCEPT_NAME");
+
+                    report.ensId = rs.getString("ENS_ID");
+                    report.mutationStatus = rs.getString("MUTATION_STATUS");
+                    report.chromosome = rs.getString("CHROMOSOME");
+                    report.ref = rs.getString("REF");
+                    report.var = rs.getString("VAR");
+                    report.start = rs.getLong("ST");
+                    report.end = rs.getLong("EN");
+                    report.variantClass = rs.getString("VARIANT_CLASS");
+                    report.variantType = rs.getString("VARIANT_TYPE");
+                    report.hgvsc = rs.getString("HGVSC");
+                    report.hgvsp = rs.getString("HGVSP");
+                    report.hgvspDb = rs.getString("HGVSP_DB");
+                    report.dbsnp = rs.getString("DBSNP");
+                    report.TTotalDepth = rs.getLong("T_TOTAL_DEPTH");
+                    report.TRefDepth = rs.getLong("T_REF_DEPTH");
+                    report.TVarDepth = rs.getLong("T_VAR_DEPTH");
+                    report.NTotalDepth = rs.getLong("N_TOTAL_DEPTH");
+                    report.NRefDepth = rs.getLong("N_REF_DEPTH");
+                    report.NVarDepth = rs.getLong("N_VAR_DEPTH");
+                    report.alleleFreq = rs.getFloat("ALLELE_FREQ");
+                    report.strand = rs.getString("STRAND");
+                    report.exon = rs.getString("EXON");
+                    report.intron = rs.getLong("INTRON");
+                    report.sift = rs.getString("SIFT");
+                    report.polyphen = rs.getString("POLYPHEN");
+                    report.domain = rs.getString("DOMAIN");
+                    report.hrd = rs.getString("HRD");
+                    report.mmr = rs.getString("MMR");
+                    report.zygosity = rs.getString("ZYGOSITY");
+                    report.transcript = rs.getInt("TRANSCRIPT");
+                    report.diagnosis = rs.getString("DIAGNOSIS");
+                    report.drug = rs.getString("DRUG");
+                    report.drugable = rs.getString("DRUGABLE");
+                    report.whitelist = rs.getString("WHITELIST");
+                    report.specimenId = rs.getInt("SPECIMEN_ID");
+                    return report;
+                }
+            });
+
+        } catch (Exception exception) {
+            throw new RuntimeException("Error getting therapy path reports" + exception.getMessage());
+        }
+    }
+
+
+    @Path("/person/{personId}/structuralvariation")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StructuralVariation> getSV(@PathParam("sourceKey") String sourceKey, @PathParam("personId") String personId) {
+        String where = " WHERE specimen_id in ( SELECT specimen_id FROM @CDM_schema.specimen WHERE person_id = " + personId + " )";
+        log.info("QUERY  >>>> " +  where);
+        try {
+            Source source = getSourceRepository().findBySourceKey(sourceKey);
+            String tableQualifier = source.getTableQualifier(SourceDaimon.DaimonType.CDM);
+
+            String sql_statement = ResourceHelper.GetResourceAsString("/resources/genomic/sql/structural_variation.sql");
+            sql_statement = SqlRender.renderSql(sql_statement, new String[]{"CDM_schema", "WHERE_condition"}, new String[]{tableQualifier, where});
+            sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
+
+            return getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<StructuralVariation>() {
+                @Override
+                public StructuralVariation mapRow(final ResultSet rs, final int arg1) throws SQLException {
+                    final StructuralVariation report = new StructuralVariation();
+                    report.svDataId = rs.getLong("SV_DATA_ID");
+                    report.updateDatetime = rs.getTimestamp("UPDATE_DATETIME");
+                    report.panel = rs.getString("PANEL");
+                    report.cliRrptId = rs.getString("CLI_RRPT_ID");
+                    report.mutType = rs.getString("MUT_TYPE");
+                    report.prjId = rs.getString("PRJ_ID");
+                    report.secId = rs.getString("SEC_ID");
+                    report.type = rs.getString("TYPE");
+                    report.gene1ConceptId = rs.getInt("GENE1_CONCEPT_ID");
+                    report.gene1ConceptName = rs.getString("CONCEPT_NAME1");
+                    report.gene2ConceptId = rs.getInt("GENE2_CONCEPT_ID");
+                    report.gene2ConceptName = rs.getString("CONCEPT_NAME2");
+                    report.mismatches = rs.getString("MISMATCHES");
+                    report.strands = rs.getString("STRANDS");
+                    report.repOverlap = rs.getString("REP_OVERLAP");
+                    report.svType = rs.getString("SV_TYPE");
+                    report.readCount = rs.getString("READ_COUNT");
+                    report.nkmers = rs.getLong("NKMERS");
+                    report.discReadCount = rs.getLong("DISC_READ_COUNT");
+                    report.breakpointCov = rs.getString("BREAKPOINT_COV");
+                    report.contigId = rs.getString("CONTIG_ID");
+                    report.contigSeq = rs.getString("CONTIG_SEQ");
+                    report.alteration = rs.getString("ALTERATION");
+                    report.alterationDb = rs.getString("ALTERATION_DB");
+                    report.transType = rs.getString("TRANSTYPE");
+                    report.rearrangementTarget = rs.getString("REARRANGEMENT_TARGET");
+                    report.specimenId = rs.getInt("SPECIMEN_ID");
+
+                    return report;
+                }
+            });
+
+        } catch (Exception exception) {
+            throw new RuntimeException("Error getting therapy path reports" + exception.getMessage());
+        }
+    }
+
 
     @Path("/person/{personId}")
     @GET
@@ -528,14 +723,14 @@ public class GenomicService extends AbstractDaoService {
     public Genomic getPersonGenomic(@PathParam("sourceKey") String sourceKey, @PathParam("personId") String personId) {
         Genomic genomic = new Genomic();
         String query = "SELECT specimen_id FROM @CDM_schema.specimen WHERE person_id = " + personId;
-
+        log.info("QUERY  >>>> " +  query);
         try {
             Source source = getSourceRepository().findBySourceKey(sourceKey);
             String tableQualifier = source.getTableQualifier(SourceDaimon.DaimonType.CDM);
 
             String sql_statement = SqlRender.renderSql(query, new String[]{"CDM_schema"}, new String[]{tableQualifier});
             sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
-            log.info("Query " + sql_statement);
+            log.info("Query Person >>>" + sql_statement);
             getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<Void>() {
                 @Override
                 public Void mapRow(final ResultSet rs, final int arg1) throws SQLException {
@@ -551,6 +746,192 @@ public class GenomicService extends AbstractDaoService {
         }
     }
 
+
+
+
+    @Path("/specimen/{specimenID}/copynumbervariation")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<CopyNumberVariation> SpecimenCNV(@PathParam("sourceKey") String sourceKey, @PathParam("specimenID") String specimenID) {
+
+        String where = " WHERE specimen_id in (  " + specimenID + " )";
+        log.info("QUERY  >>>> " +  where);
+        try {
+            Source source = getSourceRepository().findBySourceKey(sourceKey);
+            String tableQualifier = source.getTableQualifier(SourceDaimon.DaimonType.CDM);
+
+            String sql_statement = ResourceHelper.GetResourceAsString("/resources/genomic/sql/copy_number_variation.sql");
+            sql_statement = SqlRender.renderSql(sql_statement, new String[]{"CDM_schema", "WHERE_condition"}, new String[]{tableQualifier, where});
+            sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
+
+            return getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<CopyNumberVariation>() {
+                @Override
+                public CopyNumberVariation mapRow(final ResultSet rs, final int arg1) throws SQLException {
+                    final CopyNumberVariation report = new CopyNumberVariation();
+                    report.cnvDataId = rs.getLong("CNV_DATA_ID");
+                    report.updateDatetime = rs.getTimestamp("UPDATE_DATETIME");
+                    report.panel = rs.getString("PANEL");
+                    report.cliRrptId = rs.getString("CLI_RRPT_ID");
+                    report.mutType = rs.getString("MUT_TYPE");
+                    report.prjId = rs.getString("PRJ_ID");
+                    report.secId = rs.getString("SEC_ID");
+                    report.type = rs.getString("TYPE");
+                    report.chromosome = rs.getString("CHROMOSOME");
+                    report.start = rs.getLong("ST");
+                    report.end = rs.getLong("EN");
+                    report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                    report.geneConceptName = rs.getString("CONCEPT_NAME");
+                    report.log2 = rs.getFloat("LOG2");
+                    report.cn = rs.getInt("CN");
+                    report.alteration = rs.getString("ALTERATION");
+                    report.alterationDb = rs.getString("ALTERATION_DB");
+                    report.sigflag = rs.getString("SIGFLAG");
+                    report.hrd = rs.getString("HRD");
+                    report.cnvType = rs.getString("CNVTYPE");
+                    report.knownFlag = rs.getString("KNOWNFLAG");
+                    report.specimenId = rs.getInt("SPECIMEN_ID");
+
+                    return report;
+                }
+            });
+
+        } catch (Exception exception) {
+            throw new RuntimeException("Error getting therapy path reports" + exception.getMessage());
+        }
+    }
+
+
+    @Path("/specimen/{specimenID}/singlenucleotidevariants")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<SingleNucleotideVariants> SpecimenSNV(@PathParam("sourceKey") String sourceKey, @PathParam("specimenID") String specimenID) {
+
+        String where = " WHERE specimen_id in (  " + specimenID + " )";
+        log.info("QUERY  >>>> " +  where);
+        try {
+            Source source = getSourceRepository().findBySourceKey(sourceKey);
+            String tableQualifier = source.getTableQualifier(SourceDaimon.DaimonType.CDM);
+
+            String sql_statement = ResourceHelper.GetResourceAsString("/resources/genomic/sql/single_nucleotide_variants.sql");
+            sql_statement = SqlRender.renderSql(sql_statement, new String[]{"CDM_schema", "WHERE_condition"}, new String[]{tableQualifier, where});
+            sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
+
+            return getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<SingleNucleotideVariants>() {
+                @Override
+                public SingleNucleotideVariants mapRow(final ResultSet rs, final int arg1) throws SQLException {
+                    final SingleNucleotideVariants report = new SingleNucleotideVariants();
+                    report.snvDataId = rs.getLong("SNV_DATA_ID");
+                    report.updateDatetime = rs.getTimestamp("UPDATE_DATETIME");
+                    report.panel = rs.getString("PANEL");
+                    report.cliRrptId = rs.getString("CLI_RRPT_ID");
+                    report.mutType = rs.getString("MUT_TYPE");
+                    report.prjId = rs.getString("PRJ_ID");
+                    report.secId = rs.getString("SEC_ID");
+                    report.geneConceptId = rs.getInt("GENE_CONCEPT_ID");
+                    report.geneConceptName = rs.getString("CONCEPT_NAME");
+
+                    report.ensId = rs.getString("ENS_ID");
+                    report.mutationStatus = rs.getString("MUTATION_STATUS");
+                    report.chromosome = rs.getString("CHROMOSOME");
+                    report.ref = rs.getString("REF");
+                    report.var = rs.getString("VAR");
+                    report.start = rs.getLong("ST");
+                    report.end = rs.getLong("EN");
+                    report.variantClass = rs.getString("VARIANT_CLASS");
+                    report.variantType = rs.getString("VARIANT_TYPE");
+                    report.hgvsc = rs.getString("HGVSC");
+                    report.hgvsp = rs.getString("HGVSP");
+                    report.hgvspDb = rs.getString("HGVSP_DB");
+                    report.dbsnp = rs.getString("DBSNP");
+                    report.TTotalDepth = rs.getLong("T_TOTAL_DEPTH");
+                    report.TRefDepth = rs.getLong("T_REF_DEPTH");
+                    report.TVarDepth = rs.getLong("T_VAR_DEPTH");
+                    report.NTotalDepth = rs.getLong("N_TOTAL_DEPTH");
+                    report.NRefDepth = rs.getLong("N_REF_DEPTH");
+                    report.NVarDepth = rs.getLong("N_VAR_DEPTH");
+                    report.alleleFreq = rs.getFloat("ALLELE_FREQ");
+                    report.strand = rs.getString("STRAND");
+                    report.exon = rs.getString("EXON");
+                    report.intron = rs.getLong("INTRON");
+                    report.sift = rs.getString("SIFT");
+                    report.polyphen = rs.getString("POLYPHEN");
+                    report.domain = rs.getString("DOMAIN");
+                    report.hrd = rs.getString("HRD");
+                    report.mmr = rs.getString("MMR");
+                    report.zygosity = rs.getString("ZYGOSITY");
+                    report.transcript = rs.getInt("TRANSCRIPT");
+                    report.diagnosis = rs.getString("DIAGNOSIS");
+                    report.drug = rs.getString("DRUG");
+                    report.drugable = rs.getString("DRUGABLE");
+                    report.whitelist = rs.getString("WHITELIST");
+                    report.specimenId = rs.getInt("SPECIMEN_ID");
+                    return report;
+                }
+            });
+
+        } catch (Exception exception) {
+            throw new RuntimeException("Error getting therapy path reports" + exception.getMessage());
+        }
+    }
+
+
+    @Path("/specimen/{specimenID}/structuralvariation")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StructuralVariation> SpecimenSV(@PathParam("sourceKey") String sourceKey, @PathParam("specimenID") String specimenID) {
+        String where = " WHERE specimen_id in ( " + specimenID + " )";
+        log.info("QUERY  >>>> " +  where);
+        try {
+            Source source = getSourceRepository().findBySourceKey(sourceKey);
+            String tableQualifier = source.getTableQualifier(SourceDaimon.DaimonType.CDM);
+
+            String sql_statement = ResourceHelper.GetResourceAsString("/resources/genomic/sql/structural_variation.sql");
+            sql_statement = SqlRender.renderSql(sql_statement, new String[]{"CDM_schema", "WHERE_condition"}, new String[]{tableQualifier, where});
+            sql_statement = SqlTranslate.translateSql(sql_statement, "sql server", source.getSourceDialect());
+
+            return getSourceJdbcTemplate(source).query(sql_statement, new RowMapper<StructuralVariation>() {
+                @Override
+                public StructuralVariation mapRow(final ResultSet rs, final int arg1) throws SQLException {
+                    final StructuralVariation report = new StructuralVariation();
+                    report.svDataId = rs.getLong("SV_DATA_ID");
+                    report.updateDatetime = rs.getTimestamp("UPDATE_DATETIME");
+                    report.panel = rs.getString("PANEL");
+                    report.cliRrptId = rs.getString("CLI_RRPT_ID");
+                    report.mutType = rs.getString("MUT_TYPE");
+                    report.prjId = rs.getString("PRJ_ID");
+                    report.secId = rs.getString("SEC_ID");
+                    report.type = rs.getString("TYPE");
+                    report.gene1ConceptId = rs.getInt("GENE1_CONCEPT_ID");
+                    report.gene1ConceptName = rs.getString("CONCEPT_NAME1");
+                    report.gene2ConceptId = rs.getInt("GENE2_CONCEPT_ID");
+                    report.gene2ConceptName = rs.getString("CONCEPT_NAME2");
+                    report.mismatches = rs.getString("MISMATCHES");
+                    report.strands = rs.getString("STRANDS");
+                    report.repOverlap = rs.getString("REP_OVERLAP");
+                    report.svType = rs.getString("SV_TYPE");
+                    report.readCount = rs.getString("READ_COUNT");
+                    report.nkmers = rs.getLong("NKMERS");
+                    report.discReadCount = rs.getLong("DISC_READ_COUNT");
+                    report.breakpointCov = rs.getString("BREAKPOINT_COV");
+                    report.contigId = rs.getString("CONTIG_ID");
+                    report.contigSeq = rs.getString("CONTIG_SEQ");
+                    report.alteration = rs.getString("ALTERATION");
+                    report.alterationDb = rs.getString("ALTERATION_DB");
+                    report.transType = rs.getString("TRANSTYPE");
+                    report.rearrangementTarget = rs.getString("REARRANGEMENT_TARGET");
+                    report.specimenId = rs.getInt("SPECIMEN_ID");
+
+                    return report;
+                }
+            });
+
+        } catch (Exception exception) {
+            throw new RuntimeException("Error getting therapy path reports" + exception.getMessage());
+        }
+    }
+
+
+
     @Path("/specimen/{specimenID}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -560,7 +941,7 @@ public class GenomicService extends AbstractDaoService {
         try {
             Specimen specimen = getSpecimen(sourceKey, specimenID, true);
             genomic.specimens.add(specimen);
-            genomic.person = getGenomicPerson(sourceKey, Integer.toString(specimen.personID));
+            genomic.person = getGenomicPerson(sourceKey, Long.toString(specimen.personID));
             return genomic;
         } catch (Exception exception) {
             throw new RuntimeException("Error getting therapy path reports" + exception.getMessage());
@@ -623,15 +1004,19 @@ public class GenomicService extends AbstractDaoService {
         String genein = "";
 
         if(gene != null && !gene.isEmpty()){
-            genein = "sv.gene_concept_id in ( SELECT concept_id FROM @CDM_schema.concept WHERE concept_name in (" +  this.JoinArray(listToArray(gene)) + "))";
+            genein = "sv.gene1_concept_id in ( SELECT concept_id FROM @CDM_schema.concept WHERE concept_name in (" +  this.JoinArray(listToArray(gene)) + "))";
+            arrayWhere.add(genein);
+            genein = "sv.gene2_concept_id in ( SELECT concept_id FROM @CDM_schema.concept WHERE concept_name in (" +  this.JoinArray(listToArray(gene)) + "))";
             arrayWhere.add(genein);
         } else if (gene_concept_id != null && !gene_concept_id.isEmpty()){
-            genein = "sv.gene_concept_id in (" +  this.JoinArray(listToArray(gene_concept_id)) + ")";
+            genein = "sv.gene1_concept_id in (" +  this.JoinArray(listToArray(gene_concept_id)) + ")";
+            arrayWhere.add(genein);
+            genein = "sv.gene2_concept_id in (" +  this.JoinArray(listToArray(gene_concept_id)) + ")";
             arrayWhere.add(genein);
         }
 
         if(!arrayWhere.isEmpty()) {
-            where = " WHERE "+ ListAdapter.adapt(arrayWhere).makeString(" and ");
+            where = " WHERE "+ ListAdapter.adapt(arrayWhere).makeString(" or ");
         }
 
         return SqlRender.renderSql(where, new String[]{"CDM_schema"}, new String[]{tableQualifier});

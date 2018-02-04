@@ -13,11 +13,13 @@ public class StructuralVariation {
     public String panel;
     public String cliRrptId;
     public String mutType;
-    public String smpId;
     public String prjId;
     public String secId;
     public String type;
-    public Integer geneConceptId;
+    public Integer gene1ConceptId;
+    public String gene1ConceptName;
+    public Integer gene2ConceptId;
+    public String gene2ConceptName;
     public String mismatches;
     public String strands;
     public String repOverlap;

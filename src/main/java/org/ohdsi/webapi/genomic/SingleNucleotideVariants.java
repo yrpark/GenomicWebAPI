@@ -15,10 +15,10 @@ public class SingleNucleotideVariants {
     public String panel;
     public String cliRrptId;
     public String mutType;
-    public String smpId;
     public String prjId;
     public String secId;
     public Integer geneConceptId;
+    public String geneConceptName;
     public String ensId;
     public String mutationStatus;
     public String chromosome;
@@ -40,7 +40,7 @@ public class SingleNucleotideVariants {
     public Long NVarDepth;
     public Float alleleFreq;
     public String strand;
-    public String eoxn;
+    public String exon;
     public Long intron;
     public String sift;
     public String polyphen;
@@ -48,7 +48,7 @@ public class SingleNucleotideVariants {
     public String hrd;
     public String mmr;
     public String zygosity;
-    public Integer transcriptrank;
+    public Integer transcript;
     public String diagnosis;
     public String drug;
     public String drugable;

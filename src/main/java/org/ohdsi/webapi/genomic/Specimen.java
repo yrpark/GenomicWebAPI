@@ -7,7 +7,8 @@ import java.sql.Timestamp;
  * Created by packyoungjin on 02/11/17.
  */
 public class Specimen {
-    public Integer personID;
+    public Long personID;
+    public Long specimenID;
     public Integer specimenConceptID;
     public Integer specimenTypeConceptID;
     public Date specimenDate;

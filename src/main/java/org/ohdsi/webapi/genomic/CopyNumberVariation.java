@@ -11,7 +11,6 @@ public class CopyNumberVariation {
     public String panel;
     public String cliRrptId;
     public String mutType;
-    public String smpId;
     public String prjId;
     public String secId;
     public String type;
@@ -19,6 +18,7 @@ public class CopyNumberVariation {
     public Long start;
     public Long end;
     public Integer geneConceptId;
+    public String geneConceptName;
     public Float log2;
     public Integer cn;
     public String alteration;
