@@ -2,6 +2,7 @@ package org.ohdsi.webapi.genomic;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by packyoungjin on 07/10/17.
@@ -9,7 +10,7 @@ import java.util.Collection;
 
 public class Genomic {
     public GenomicPerson person;
-    public ArrayList<Specimen> specimens;
+    public List<Specimen> specimens;
 
     public Genomic(){
         person = new GenomicPerson();

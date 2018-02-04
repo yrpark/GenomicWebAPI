@@ -1,33 +1,25 @@
 SELECT
-sv.SV_DATA_ID,
-sv.UPDATE_DATETIME,
-sv.PANEL,
-sv.CLI_RRPT_ID,
-sv.MUT_TYPE,
-sv.PRJ_ID,
-sv.SEC_ID,
-sv.TYPE,
+sv.SV_ID,
+sv.OMICS_META_ID,
 sv.GENE1_CONCEPT_ID,
 c1.concept_name as CONCEPT_NAME1,
 sv.GENE2_CONCEPT_ID,
 c2.concept_name as CONCEPT_NAME2,
-sv.MISMATCHES,
-sv.STRANDS,
-sv.REP_OVERLAP,
-sv.SV_TYPE,
-sv.READ_COUNT,
-sv.NKMERS,
-sv.DISC_READ_COUNT,
-sv.BREAKPOINT_COV,
-sv.CONTIG_ID,
-sv.CONTIG_SEQ,
-sv.ALTERATION,
-sv.ALTERATION_DB,
-sv.TRANSTYPE,
-sv.REARRANGEMENT_TARGET,
-sv.SPECIMEN_ID
-FROM @CDM_schema.genomic_structural_variation sv
+sv.GENE3_CONCEPT_ID,
+c3.concept_name as CONCEPT_NAME3,
+sv.BREAKPOINT1,
+sv.BREAKPOINT2,
+sv.BREAKPOINT3,
+sv.STRANDS1,
+sv.STRANDS2,
+sv.STRANDS3,
+sv.SUPPORTING_READS1,
+sv.SUPPORTING_READS2,
+sv.SUPPORTING_READS3,
+sv.CONTIG_SEQUENCE
+FROM @CDM_schema.genomic_sv sv
     INNER JOIN @CDM_schema.concept c1 ON sv.gene1_concept_id =c1.concept_id
     INNER JOIN @CDM_schema.concept c2 ON sv.gene2_concept_id=c2.concept_id
+    INNER JOIN @CDM_schema.concept c3 ON sv.gene3_concept_id=c2.concept_id
 @WHERE_condition
 

@@ -8,32 +8,22 @@ import java.sql.Timestamp;
  * Created by packyoungjin on 28/09/17.
  */
 public class StructuralVariation {
-    public Long svDataId;
-    public Timestamp updateDatetime;
-    public String panel;
-    public String cliRrptId;
-    public String mutType;
-    public String prjId;
-    public String secId;
-    public String type;
+    public Long svId;
+    public Long omicsMetaId;
     public Integer gene1ConceptId;
     public String gene1ConceptName;
     public Integer gene2ConceptId;
     public String gene2ConceptName;
-    public String mismatches;
-    public String strands;
-    public String repOverlap;
-    public String svType;
-    public String readCount;
-    public Long nkmers;
-    public Long discReadCount;
-    public String breakpointCov;
-    public String contigId;
-    public String contigSeq;
-    public String alteration;
-    public String alterationDb;
-    public String transType;
-    public String rearrangementTarget;
-    public Integer specimenId;
-
+    public Integer gene3ConceptId;
+    public String gene3ConceptName;
+    public String breakpoint1;
+    public String breakpoint2;
+    public String breakpoint3;
+    public String strands1;
+    public String strands2;
+    public String strands3;
+    public String supportingReads1;
+    public String supportingReads2;
+    public String supportingReads3;
+    public String contigSequence;
 }

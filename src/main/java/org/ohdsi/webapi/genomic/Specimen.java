@@ -2,6 +2,8 @@ package org.ohdsi.webapi.genomic;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by packyoungjin on 02/11/17.
@@ -23,7 +25,11 @@ public class Specimen {
     public String anatomicSiteSourceValue;
     public String diseaseStatusSourceValue;
 
-    public CopyNumberVariation cnv;
-    public SingleNucleotideVariants snv;
-    public StructuralVariation sv;
+    public List<GenomicOmicsMeta> omicsMetas;
+
+
+    public Specimen(){
+        omicsMetas = new ArrayList<>();
+
+    }
 }

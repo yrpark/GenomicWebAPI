@@ -1,5 +1,6 @@
 package org.ohdsi.webapi.genomic;
 
+import java.sql.Date;
 import java.util.ArrayList;
 
 /**
@@ -15,7 +16,7 @@ public class GenomicPerson {
     public int yearOfBirth;
     public int monthOfBirth;
     public int dayOfBirth;
-    public int deathDate;
+    public Date deathDate;
 
     public ArrayList<Measurement> measurement;
     public ArrayList<ProcedureOccurrence> procedureoccurrence;
